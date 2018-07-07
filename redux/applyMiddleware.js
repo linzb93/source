@@ -30,8 +30,30 @@ export default function applyMiddleware(...middlewares) {
       getState: store.getState,
       dispatch: (...args) => dispatch(...args)
     }
+    /**
+     * Redux middleware的格式基本上是这样的
+     * const m = ({dispatch, getState}) => next => action => {};
+     * e.g:
+     * const logger = ({dispatch, getState}) => next => action => {
+     *      console.log('before');
+     *      next(action);
+     *      console.log(getState());
+     *      console.log('after');
+     * };
+     */
     const chain = middlewares.map(middleware => middleware(middlewareAPI))
+    /**
+     * middleware(middlewareAPI) 返回的是 f(next)
+     * next 也就是 dispatch
+     * 因此 chain[i](dispatch) 返回的是 f(action)
+     */
     dispatch = compose(...chain)(store.dispatch)
+    /**
+     * dispatch的值就是 chain[0](dispatch)，也是 f(action)
+     * 在业务代码里面 dispatch 之后，是从第一个中间件开始执行的，一直到最后一个中间件，然后发送给 reducer。
+     * 每个中间件的 next 就是 dispatch，也就是下一个中间件的 f(action)。
+     * 最后一个中间件的 next 就是原有的 store.dispatch，此时执行 store.dispatch 就是发送给 reducer 了。
+     */
 
     return {
       ...store,
