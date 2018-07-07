@@ -38,7 +38,9 @@ export default function createStore(reducer, preloadedState, enhancer) {
     if (typeof enhancer !== 'function') {
       throw new Error('Expected the enhancer to be a function.')
     }
-
+    /**
+     * 结合 applymiddleware，这里不会出现死循环，因为下面传入的参数没有 enhancer 了。
+     */
     return enhancer(createStore)(reducer, preloadedState)
   }
 
@@ -258,6 +260,9 @@ export default function createStore(reducer, preloadedState, enhancer) {
   // When a store is created, an "INIT" action is dispatched so that every
   // reducer returns their initial state. This effectively populates
   // the initial state tree.
+  /**
+   * 在内部会有一次dispatch, 因此在subscribe后，dispatch之前，会打印结果。
+   */
   dispatch({ type: ActionTypes.INIT })
 
   return {

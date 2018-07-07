@@ -13,7 +13,7 @@ function getUndefinedStateErrorMessage(key, action) {
     `If you want this reducer to hold no value, you can return null instead of undefined.`
   )
 }
-
+// 检测 state 是否为 Object，以及 reducers 是否为空
 function getUnexpectedStateShapeWarningMessage(
   inputState,
   reducers,
@@ -61,7 +61,7 @@ function getUnexpectedStateShapeWarningMessage(
     )
   }
 }
-
+// 检测每个 reducer 是否有返回值，如果没有返回值，就报错
 function assertReducerShape(reducers) {
   Object.keys(reducers).forEach(key => {
     const reducer = reducers[key]
