@@ -39,6 +39,7 @@ function createLogger(options = {}) {
   }
 
   // Detect if 'createLogger' was passed directly to 'applyMiddleware'.
+  // 检测 createLogger 是否被当做 applyMiddleware的参数了
   if (options.getState && options.dispatch) {
     // eslint-disable-next-line no-console
     console.error(`[redux-logger] redux-logger not installed. Make sure to pass logger instance as middleware:
@@ -66,6 +67,7 @@ const store = createStore(
 
   return ({ getState }) => next => (action) => {
     // Exit early if predicate function returns 'false'
+    // 如果predicate函数返回false，就结束，跳到下一个中间件
     if (typeof predicate === 'function' && !predicate(getState, action)) {
       return next(action);
     }
