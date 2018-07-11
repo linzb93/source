@@ -61,7 +61,7 @@ function printBuffer(buffer, options) {
 
     // Message
     const formattedAction = actionTransformer(action);
-    const isCollapsed = typeof collapsed === 'function'
+    const isCollapsed = typeof collapsed === 'function' // 是否折叠的
       ? collapsed(() => nextState, action, logEntry)
       : collapsed;
 
@@ -75,6 +75,7 @@ function printBuffer(buffer, options) {
 
     // Render
     try {
+        // 下面的logger默认是console，也可以自己定义一个Object，但是一定要有key是groupCollapsed和group,而且要是function
       if (isCollapsed) {
         if (colors.title && isUsingDefaultFormatter) {
           logger.groupCollapsed(`%c ${title}`, ...headerCSS);
@@ -132,6 +133,7 @@ function printBuffer(buffer, options) {
     }
 
     if (diff) {
+      // 对比 prevState和nextState
       diffLogger(prevState, nextState, logger, isCollapsed);
     }
 
