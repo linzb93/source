@@ -4,7 +4,7 @@ import isArray from 'lodash/isArray';
 import last from 'lodash/last';
 import isString from 'lodash/isString';
 import isFunction from 'lodash/isFunction';
-import isNil from 'lodash/isNil';
+import isNil from 'lodash/isNil'; // 检查一个值是否为null或undefined
 import invariant from 'invariant';
 import camelCase from './utils/camelCase';
 import arrayToObject from './utils/arrayToObject';
