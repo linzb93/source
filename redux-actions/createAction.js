@@ -29,6 +29,7 @@ export default function createAction(
     // action 就像redux中的action一样是个Object，这里除了payload，还有error和meta。
     const action = { type }; 
 
+    // 如果 error，那么在 reducers 里面，就会进入 error reducer了
     if (payload instanceof Error) {
       action.error = true;
     }

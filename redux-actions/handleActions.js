@@ -1,5 +1,6 @@
 import isPlainObject from 'lodash/isPlainObject';
 import isMap from 'lodash/isMap';
+// 把多个reducer合并成一个reducer,但和combineReducers不一样。
 import reduceReducers from 'reduce-reducers';
 import invariant from 'invariant';
 import handleAction from './handleAction';
