@@ -12,6 +12,21 @@ export default function unflattenActionCreators(
     partialFlatActionTypePath = []
   ) {
     const nextNamespace = camelCase(partialFlatActionTypePath.shift());
+    /**
+     * 对于一般的 actionCreatorsMap 来说，也就是复制了一遍。
+     * 这是要处理这种 map 的，例如：(假设namespace是"//")
+     * {
+     *    “a//b///c”: actionCreator
+     * }
+     * 这个将转换成：
+     * {
+     *    "a":{
+     *        "b": {
+     *            "c": actionCreator
+     *        }
+     *    }
+     * }
+     */
     if (isEmpty(partialFlatActionTypePath)) {
       partialNestedActionCreators[nextNamespace] =
         flatActionCreators[flatActionType];
@@ -35,6 +50,7 @@ export default function unflattenActionCreators(
     return unflatten(
       type,
       nestedActionCreators,
+      // 可能某些type自带这个namespace(比如默认的'//')
       unprefixedType.split(namespace)
     );
   });

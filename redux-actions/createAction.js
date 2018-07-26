@@ -1,7 +1,7 @@
 import identity from 'lodash/identity'; // 返回函数的第一个参数
 import isFunction from 'lodash/isFunction';
 import isNull from 'lodash/isNull';
-import invariant from 'invariant'; // 在开发过程中报描述性错误，在生产环境抛出错误
+import invariant from 'invariant'; // 在开发过程中报描述性错误，在生产环境抛出错误。陈述的代码返回值为true
 
 export default function createAction(
   type,
@@ -29,6 +29,7 @@ export default function createAction(
     // action 就像redux中的action一样是个Object，这里除了payload，还有error和meta。
     const action = { type }; 
 
+    // 如果 error，那么在 reducers 里面，就会进入 error reducer了
     if (payload instanceof Error) {
       action.error = true;
     }

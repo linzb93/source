@@ -8,6 +8,10 @@ import invariant from 'invariant';
 import { ACTION_TYPE_DELIMITER } from './constants';
 
 export default function handleAction(type, reducer = identity, defaultState) {
+  /**
+   * reducer 可以是和redux的reducer一样的function，
+   * 也可以是一个Object，包含next和throw两个属性，默认为identity。
+   */
   const types = type.toString().split(ACTION_TYPE_DELIMITER);
   invariant(
     !isUndefined(defaultState),
@@ -30,6 +34,10 @@ export default function handleAction(type, reducer = identity, defaultState) {
       return state;
     }
 
+    /**
+     * 返回的就是一个普通的 reducer 了
+     * reducer(state, action) => a new state
+     */
     return (action.error === true ? throwReducer : nextReducer)(state, action);
   };
 }
