@@ -27,7 +27,7 @@ function areArgumentsShallowlyEqual(equalityCheck, prev, next) {
 export function defaultMemoize(func, equalityCheck = defaultEqualityCheck) {
   let lastArgs = null
   let lastResult = null
-  // we reference arguments instead of spreading them for performance reasons
+
   return function () {
     // 每次调用函数时会跟lastArgs比较，如果相同，则直接返回lastResult，否则lastResult要计算一遍再返回。
     if (!areArgumentsShallowlyEqual(equalityCheck, lastArgs, arguments)) {
@@ -62,10 +62,21 @@ function getDependencies(funcs) {
  * @param {any} memoizeOptions 需要用到的参数
  */
 export function createSelectorCreator(memoize, ...memoizeOptions) {
+  /**
+   * createSelector的使用demo:
+   * 
+   * const shop = item => item.shop;
+   * const shopSelector = createSelector(shop, item => item * 2);
+   * shopSelector({shop: 3}); //输出6
+   * 
+   * 原理：
+   * 1. 获取前面n-1个函数参数并执行，函数的参数就是selector函数的参数；
+   * 2. 将上面的结果作为参数传入createSelector的最后一个函数参数并执行，输出结果。
+   */
   return (...funcs) => {
     let recomputations = 0
     const resultFunc = funcs.pop()
-    const dependencies = getDependencies(funcs)
+    const dependencies = getDependencies(funcs) // 这里的dependencies已经排除funcs数组的最后一个item了
     
     /**
      * 计数器+1，执行最后一个函数。
@@ -73,7 +84,6 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
     const memoizedResultFunc = memoize(
       function () {
         recomputations++
-        // apply arguments instead of spreading for performance.
         return resultFunc.apply(null, arguments)
       },
       ...memoizeOptions
@@ -85,11 +95,10 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
       const length = dependencies.length
 
       for (let i = 0; i < length; i++) {
-        // apply arguments instead of spreading and mutate a local list of params for performance.
+        // 这里的arguments不是空的，因为这个是在defaultMemoize函数return的函数当中执行。
         params.push(dependencies[i].apply(null, arguments))
       }
 
-      // apply arguments instead of spreading for performance.
       return memoizedResultFunc.apply(null, params)
     })
 
@@ -104,7 +113,16 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
 // 这个是最常用的。
 export const createSelector = createSelectorCreator(defaultMemoize)
 
+/**
+ * 由多个selector组成，返回一个Object。
+ * 和createSelector不同，createSelector可能返回一个具体值，因为无法知道传入的key，
+ * 而createStructuredSelector就知道传入的key是什么，所以返回的是一个Object。
+ * createStructuredSelector返回的Object的key和selectors的key一一对应。
+ * @param {Object} selectors 
+ * @param {Function} selectorCreator 
+ */
 export function createStructuredSelector(selectors, selectorCreator = createSelector) {
+  // selectors建议是Object，而不是Array
   if (typeof selectors !== 'object') {
     throw new Error(
       'createStructuredSelector expects first argument to be an object ' +
