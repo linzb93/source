@@ -1,7 +1,12 @@
 function defaultEqualityCheck(a, b) {
   return a === b
 }
-
+/**
+ * 判断两个数组是否浅相等
+ * @param {Function} equalityCheck 判断二者相等的函数
+ * @param {Array} prev 
+ * @param {Array} next 
+ */
 function areArgumentsShallowlyEqual(equalityCheck, prev, next) {
   if (prev === null || next === null || prev.length !== next.length) {
     return false
@@ -18,11 +23,13 @@ function areArgumentsShallowlyEqual(equalityCheck, prev, next) {
   return true
 }
 
+// 默认的存储函数
 export function defaultMemoize(func, equalityCheck = defaultEqualityCheck) {
   let lastArgs = null
   let lastResult = null
   // we reference arguments instead of spreading them for performance reasons
   return function () {
+    // 每次调用函数时会跟lastArgs比较，如果相同，则直接返回lastResult，否则lastResult要计算一遍再返回。
     if (!areArgumentsShallowlyEqual(equalityCheck, lastArgs, arguments)) {
       // apply arguments instead of spreading for performance.
       lastResult = func.apply(null, arguments)
@@ -34,6 +41,7 @@ export function defaultMemoize(func, equalityCheck = defaultEqualityCheck) {
 }
 
 function getDependencies(funcs) {
+  // 要求传入的数组元素都是函数。返回参数或参数的第一个元素，类型是数组。
   const dependencies = Array.isArray(funcs[0]) ? funcs[0] : funcs
 
   if (!dependencies.every(dep => typeof dep === 'function')) {
@@ -48,13 +56,20 @@ function getDependencies(funcs) {
 
   return dependencies
 }
-
+/**
+ * 
+ * @param {Function} memoize 记忆函数
+ * @param {any} memoizeOptions 需要用到的参数
+ */
 export function createSelectorCreator(memoize, ...memoizeOptions) {
   return (...funcs) => {
     let recomputations = 0
     const resultFunc = funcs.pop()
     const dependencies = getDependencies(funcs)
-
+    
+    /**
+     * 计数器+1，执行最后一个函数。
+     */
     const memoizedResultFunc = memoize(
       function () {
         recomputations++
@@ -86,6 +101,7 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
   }
 }
 
+// 这个是最常用的。
 export const createSelector = createSelectorCreator(defaultMemoize)
 
 export function createStructuredSelector(selectors, selectorCreator = createSelector) {
