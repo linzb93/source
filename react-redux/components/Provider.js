@@ -24,7 +24,10 @@ export function createProvider(storeKey = 'store') {
 
     class Provider extends Component {
         getChildContext() {
-          return { [storeKey]: this[storeKey], [subscriptionKey]: null }
+          return {
+              [storeKey]: this[storeKey],
+              [subscriptionKey]: null
+            }
         }
 
         constructor(props, context) {
@@ -33,6 +36,10 @@ export function createProvider(storeKey = 'store') {
         }
 
         render() {
+          /**
+           * Children是用来处理this.props.children的。
+           * Children.only返回唯一的子组件，如果不是唯一的，就报错。
+           */
           return Children.only(this.props.children)
         }
     }

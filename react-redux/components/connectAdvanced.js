@@ -1,4 +1,4 @@
-import hoistStatics from 'hoist-non-react-statics'
+import hoistStatics from 'hoist-non-react-statics' // 用于拷贝React组件的静态方法
 import invariant from 'invariant'
 import { Component, createElement } from 'react'
 import { polyfill } from 'react-lifecycles-compat'
