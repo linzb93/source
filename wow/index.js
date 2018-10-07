@@ -139,6 +139,7 @@
   
     })());
   
+    // 获取元素样式
     getComputedStyle = this.getComputedStyle || function(el, pseudo) {
       this.getPropertyValue = function(prop) {
         var ref;
@@ -163,7 +164,7 @@
         animateClass: 'animated',
         offset: 0,
         mobile: true,
-        live: true,
+        live: true, // 异步生成的dom
         callback: null,
         scrollContainer: null
       };
@@ -264,7 +265,8 @@
           });
         }
       };
-  
+
+      // 移除滚动监听
       WOW.prototype.stop = function() {
         this.stopped = true;
         this.util().removeEvent(this.config.scrollContainer || window, 'scroll', this.scrollHandler);
@@ -273,7 +275,8 @@
           return clearInterval(this.interval);
         }
       };
-  
+      
+      // 低版本浏览器做的兼容处理
       WOW.prototype.sync = function(element) {
         if (MutationObserver.notSupported) {
           return this.doSync(this.element);
@@ -365,7 +368,8 @@
           return target.className = target.className.replace(this.config.animateClass, '').trim();
         }
       };
-  
+      
+      // 下面的animationxx是CSS3的animation属性
       WOW.prototype.customStyle = function(box, hidden, duration, delay, iteration) {
         if (hidden) {
           this.cacheAnimationName(box);
